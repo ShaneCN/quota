@@ -26,6 +26,7 @@ public class QuotaAccountServiceImpl implements QuotaAccountService {
     @Resource
     private QuotaAccountRepo quotaAccountRepo;
 
+    /** 事务模板 */
     @Resource
     private TransactionTemplate transactionTemplate;
 
@@ -120,7 +121,7 @@ public class QuotaAccountServiceImpl implements QuotaAccountService {
      *
      * @param context 查询上下文
      * @return 账号信息
-     * @throws Exception 异常
+     * @throws Exception 账户不存在时，抛出异常
      */
     private QuotaAccount queryWithThrow(QuotaAccountOptContext context) throws Exception {
         QuotaAccount queryAccount = quotaAccountRepo.queryByUserId(context.getUserId());
@@ -130,6 +131,12 @@ public class QuotaAccountServiceImpl implements QuotaAccountService {
         return queryAccount;
     }
 
+    /**
+     * 执行扣减
+     *
+     * @param context 上下文，包含用户id、金额
+     * @throws Exception 账户不存在、加锁失败、更新失败，抛出异常
+     */
     private void doIncreaseWithThrow(QuotaAccountOptContext context) throws Exception {
         // 1. 加锁
         UserAccountDO userAccountDO = userAccountDOMapper.lockByUserIdNoWait(context.getUserId());
@@ -145,6 +152,12 @@ public class QuotaAccountServiceImpl implements QuotaAccountService {
         quotaAccountRepo.update(queryQuotaAccount, context, OptTypeEnum.INCRE);
     }
 
+    /**
+     * 执行增加额度
+     *
+     * @param context 上下文，包含用户id、金额、业务号
+     * @throws Exception 账户不存在、加锁失败、更新失败，抛出异常
+     */
     private void doDecreaseWithThrow(QuotaAccountOptContext context) throws Exception {
         // 1. 加锁
         UserAccountDO userAccountDO = userAccountDOMapper.lockByUserIdNoWait(context.getUserId());

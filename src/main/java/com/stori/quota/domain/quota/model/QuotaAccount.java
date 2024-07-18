@@ -61,7 +61,7 @@ public class QuotaAccount implements Serializable {
      * 扣减账户额度
      *
      * @param modiAmount 扣减额度
-     * @throws Exception
+     * @throws Exception 超支时抛异常
      */
     public void decrese(BigDecimal modiAmount) throws Exception {
         if (this.amount.compareTo(modiAmount) < 0) {

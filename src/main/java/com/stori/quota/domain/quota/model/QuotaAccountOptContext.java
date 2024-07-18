@@ -30,5 +30,4 @@ public class QuotaAccountOptContext {
      */
     private String bizNo;
 
-
 }

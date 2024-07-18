@@ -23,7 +23,6 @@ public interface QuotaAccountService {
      * 初始化时若已存在该账户，抛异常
      *
      * @param context 包含用户id, 初始化额度
-     * @return 额度账户信息
      */
     void init(QuotaAccountOptContext context) throws Exception;
 
@@ -31,7 +30,6 @@ public interface QuotaAccountService {
      * 增加账户额度
      *
      * @param context 包含用户id, 增加额度
-     * @return 额度账户信息
      */
     void increse(QuotaAccountOptContext context) throws Exception;
 
@@ -40,7 +38,6 @@ public interface QuotaAccountService {
      * 如果账户扣减后小于0，增扣减失败抛出异常
      *
      * @param context 包含用户id, 扣减额度
-     * @return 额度账户信息
      */
     void decrease(QuotaAccountOptContext context) throws Exception;
 

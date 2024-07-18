@@ -42,6 +42,13 @@ public class QuotaController {
         return result;
     }
 
+    /**
+     * 额度增加
+     *
+     * @param userId 用户id
+     * @param amount 额度
+     * @return 结果
+     */
     @RequestMapping(value = "/flowin/user/{userId}/amount/{amount}", method = RequestMethod.GET)
     @ResponseBody
     public Result<QuotaAccount> flowIn(@PathVariable("userId") String userId, @PathVariable("amount") String amount) {
@@ -56,6 +63,13 @@ public class QuotaController {
         return result;
     }
 
+    /**
+     * 额度增加
+     *
+     * @param userId 用户id
+     * @param amount 额度
+     * @return 结果
+     */
     @RequestMapping(value = "/flowout/user/{userId}/amount/{amount}", method = RequestMethod.GET)
     @ResponseBody
     public Result<QuotaAccount> flowOut(@PathVariable("userId") String userId, @PathVariable("amount") String amount) {
@@ -70,6 +84,12 @@ public class QuotaController {
         return result;
     }
 
+    /**
+     * 额度增加
+     *
+     * @param userId 用户id
+     * @return 结果
+     */
     @RequestMapping(value = "/query/user/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public Result<QuotaAccount> query(@PathVariable("userId") String userId) {

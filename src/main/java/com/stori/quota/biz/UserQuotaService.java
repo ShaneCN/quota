@@ -34,8 +34,7 @@ public class UserQuotaService {
             throw new Exception("入参为空");
         }
 
-        return quotaAccountService.query(
-                QuotaAccountOptContext
+        return quotaAccountService.query(QuotaAccountOptContext
                         .builder()
                         .userId(userId)
                         .build());
@@ -50,7 +49,77 @@ public class UserQuotaService {
      * @throws Exception 异常
      */
     public QuotaAccount openAccount(String userId, String amount) throws Exception {
+        checkParam(userId, amount);
 
+        quotaAccountService.init(QuotaAccountOptContext.builder()
+                .userId(userId)
+                .amount(new BigDecimal(amount))
+                .bizNo(genBizNo())
+                .build());
+
+        return quotaAccountService.query(QuotaAccountOptContext.builder()
+                .userId(userId)
+                .build());
+    }
+
+    /**
+     * 额度增加
+     * 注：这里返回最新额度，而非扣减后的额度。在并发情况下，可能不一致
+     *
+     * @param userId 用户id
+     * @param amount 额度
+     * @return 最新额度
+     * @throws Exception 变更异常，包括但不限于数据库加锁失败
+     */
+    public QuotaAccount flowIn(String userId, String amount) throws Exception {
+        checkParam(userId, amount);
+        quotaAccountService.increse(QuotaAccountOptContext.builder()
+                .userId(userId)
+                .amount(new BigDecimal(amount))
+                .bizNo(genBizNo())
+                .build());
+
+        return quotaAccountService.query(QuotaAccountOptContext.builder().userId(userId).build());
+    }
+
+    /**
+     * 额度扣减
+     * 注：这里返回最新额度，而非扣减后的额度。在并发情况下，可能不一致
+     *
+     * @param userId 用户id
+     * @param amount 额度
+     * @return 最新额度
+     * @throws Exception 变更异常，包括但不限于数据库加锁失败、额度超扣
+     */
+    public QuotaAccount flowOut(String userId, String amount) throws Exception {
+        checkParam(userId, amount);
+        quotaAccountService.decrease(QuotaAccountOptContext.builder()
+                .userId(userId)
+                .amount(new BigDecimal(amount))
+                .bizNo(genBizNo())
+                .build());
+
+        return quotaAccountService.query(QuotaAccountOptContext.builder().userId(userId).build());
+    }
+
+    /**
+     * 生成业务单号，当前的处理方式比较简单，使用UUID
+     * 后续可以统一在此修改
+     *
+     * @return 业务单号
+     */
+    private String genBizNo() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
+     * 校验入参不为空
+     *
+     * @param userId 用户id
+     * @param amount 金额
+     * @throws Exception 参数错误异常
+     */
+    private void checkParam(String userId, String amount) throws Exception {
         if (StringUtils.isEmpty(userId)) {
             throw new Exception("用户名为空");
         }
@@ -59,42 +128,5 @@ public class UserQuotaService {
             throw new Exception("金额为空");
         }
 
-        quotaAccountService.init(QuotaAccountOptContext.builder()
-                .userId(userId)
-                .amount(new BigDecimal(amount))
-                .bizNo(genBizNo())
-                .build());
-
-        return quotaAccountService.query(QuotaAccountOptContext.builder().
-                userId(userId)
-                .build());
-    }
-
-    public QuotaAccount flowIn(String userId, String amount) throws Exception {
-        quotaAccountService.increse(QuotaAccountOptContext.builder()
-                .userId(userId)
-                .amount(new BigDecimal(amount))
-                .bizNo(genBizNo())
-                .build());
-
-        return quotaAccountService.query(QuotaAccountOptContext.builder()
-                .userId(userId)
-                .build());
-    }
-
-    public QuotaAccount flowOut(String userId, String amount) throws Exception {
-        quotaAccountService.decrease(QuotaAccountOptContext.builder()
-                .userId(userId)
-                .amount(new BigDecimal(amount))
-                .bizNo(genBizNo())
-                .build());
-
-        return quotaAccountService.query(QuotaAccountOptContext.builder()
-                .userId(userId)
-                .build());
-    }
-
-    private String genBizNo() {
-        return UUID.randomUUID().toString();
     }
 }

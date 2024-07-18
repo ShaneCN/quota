@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
 public class SimulateUserOptService {
 
     /** 随机金额边界，0-99 */
-    private static int AMOUNT_BOUND = 100;
+    private final static int AMOUNT_BOUND = 100;
 
     /** 线程池 */
     private final ThreadPoolExecutor threadPoolExecutor =
-            new ThreadPoolExecutor(20, 20, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
+            new ThreadPoolExecutor(20, 20, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(100));
 
     /** 额度账户服务 */
     @Resource
@@ -79,7 +79,7 @@ public class SimulateUserOptService {
 
     /**
      * 多线程操作单用户账户
-     * 校验并发环境下锁是否生效
+     * 用于校验并发环境下锁是否生效
      *
      * @param userId 用户id
      */
@@ -98,7 +98,7 @@ public class SimulateUserOptService {
      */
     private void singleUserRandomOpt(String userId) {
         Random random = new Random();
-        QuotaAccount before = null;
+        QuotaAccount before;
 
         // 1. 如果随机数为奇数，触发增
         if (random.nextInt() % 2 == 1) {
@@ -114,8 +114,6 @@ public class SimulateUserOptService {
                 log.info("{}记增成功: 变更前金额:{}, 变更金额:{}", userId, before.getAmount(), modified);
             } catch (Exception e) {
                 log.error("余额记增失败，userId:{}, 失败原因：{}", userId, e.getMessage());
-            } finally {
-                before = null;
             }
         }
 
@@ -134,8 +132,6 @@ public class SimulateUserOptService {
                 log.info("{}扣减成功: 变更前金额:{}, 变更金额{}", userId, before.getAmount(), modified);
             } catch (Exception e) {
                 log.error("余额扣减失败，userId:{}, 失败原因：{}", userId, e.getMessage());
-            } finally {
-                before = null;
             }
         }
     }
