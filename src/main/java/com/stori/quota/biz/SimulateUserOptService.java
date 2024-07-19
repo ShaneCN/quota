@@ -62,7 +62,7 @@ public class SimulateUserOptService {
         multiThreadOpt(userIds);
 
         // 4. 对单个用户并发增加操作
-//        multiThreadSingleUserOpt(userIds.get(0));
+        multiThreadSingleUserOpt(userIds.get(0));
     }
 
     /**
